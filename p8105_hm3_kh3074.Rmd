@@ -1,0 +1,21 @@
+---
+title: "p8105_hw3_kh3074"
+output: github_document
+date: 10-14-2021
+author: KaiYu He(kh3074)
+---
+```{r}
+library(tidyverse)
+library(p8105.datasets)
+```
+
+# Problem 1
+
+## Load Data
+```{r}
+data("instacart")
+summary(instacart)
+```
+### interpretation of the data  
+- The ***instacart*** data has `r nrow(instacart)` rows of data with `r ncol(instacart)` columns of features.
+- 
