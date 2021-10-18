@@ -19,8 +19,8 @@ summary(instacart)
 ```
 ### interpretation of the data  
 - The ***instacart*** data has `r nrow(instacart)` rows of data with `r ncol(instacart)` columns of features.
-- The is an online grocery shopping data set, ***order_id*** is the identifier for each order, ***prodect_id*** is the product identifier, ***reordered*** equals 1 if the product is ordered by the user in the past, ***order_dow*** is the day of the week on which the product was placed, ***days_since_prior_order*** is days since the last order, capped at 30, NA if order_number=1.  
-- Take the first line as an example, Bulgarian Yogurt was placed by user '112108' from 'dairy eggs' department. This is not the first time the user buys this item.  
+- The is an online grocery shopping data set, ***order_id*** is the identifier for each order, ***prodect_id*** is the product identifier, ***reordered*** equals 1 if the product is ordered by the user in the past, ***order_dow*** is the day of the week on which the product was placed, ***days_since_prior_order*** is days since the last order, capped at 30, NA if order_number=1.All the orders are selected from eval_set == train.  
+- Take the first line as an example, Bulgarian Yogurt was placed by user '112108' from 'dairy eggs' department. The user has already bought this item before.  
 
 ### 2
 ```{r}
@@ -31,7 +31,7 @@ instacart%>%
   knitr::kable() #show the most 5 items ordered
 ```
 
-- There are `r instacart%>%count(aisle)%>%nrow()` aisles in the data, accroding the data frame, fresh vegetable is the most ordered item.  
+- There are `r instacart%>%count(aisle)%>%nrow()` aisles in the data, accroding the data frame, ***fresh vegetable*** is the most ordered item.  
 
 
 ### 3
@@ -67,7 +67,7 @@ instacart%>%
     mean_hour_of_day = mean(order_hour_of_day)
   )%>%
   pivot_wider(
-    names_from = product_name,
+    names_from = order_dow,
     values_from = mean_hour_of_day
   )%>%
   knitr::kable()
@@ -110,6 +110,8 @@ state_2002 =
   rename('state_2002' = locationabbr)%>%
   summarize(locations_obversed = n()/5)%>% #Five levels for each location
   filter(locations_obversed >= 7)
+state_2002%>%
+  knitr::kable()
 ```
 
 - According to the table, there are `r nrow(state_2002)` states were observed at more than 7 locations.
@@ -122,6 +124,8 @@ state_2010 =
   rename('state_2010' = locationabbr)%>%
   summarize(locations_obversed = n()/5)%>% #Five levels for each location
   filter(locations_obversed >= 7)
+state_2010%>%
+  knitr::kable()
 ```
 
 - According to the table, there are `r nrow(state_2010)` states were observed at more than 7 locations.
@@ -160,7 +164,8 @@ accel_tidy =
     values_to = 'number_of_activity' #merge the acctivity per minuter to a single column
   )%>%
   mutate(minute_of_day = str_replace(minute_of_day,'activity.',''))%>% 
-  mutate(minute_of_day = as.numeric(minute_of_day)) # translate minute variable to numeric
+  mutate(minute_of_day = as.numeric(minute_of_day))%>% # translate minute variable to numeric
+  mutate(weekday_or_weekend = ifelse(day %in% c('Saturday','Sunday'),'weekend','weekday'))
 accel_tidy
 ```
 - There are total `r nrow(accel_tidy)` rows of obs in the tidy dataset, which contain number of activities per minute(1440 per day) in `r nrow(accel)` days.
@@ -185,8 +190,7 @@ accel_tidy%>%
 # plot in minute
 accel_tidy%>%
   mutate(day_id = as.character(day_id))%>%
-  ggplot(aes(x = minute_of_day,y = number_of_activity,color = day_id))+
-  geom_point(alpha = 0.5)+
+  ggplot(aes(x = minute_of_day,y = number_of_activity,color = day))+
   geom_line(alpha = 0.5)
 
 # plot in hour
@@ -195,14 +199,29 @@ accel_tidy%>%
   mutate(hour_of_day = ceiling(minute_of_day/60))%>%
   group_by(day_id,hour_of_day)%>%
   summarize(
-    numberof_activities_hour = sum(number_of_activity)
+    numberof_activities_hour = sum(number_of_activity),
+    day = day
   )%>%
-  ggplot(aes(x = hour_of_day, numberof_activities_hour ,color = day_id))+
-  geom_point(alpha = 0.5)+
+  ggplot(aes(x = hour_of_day, numberof_activities_hour ,color = day))+
+  geom_line(alpha = 0.5)
+
+#plot divided by weekday and weekend
+accel_tidy%>%
+  mutate(day_id = as.character(day_id))%>%
+  mutate(hour_of_day = ceiling(minute_of_day/60))%>%
+  group_by(day_id,hour_of_day)%>%
+  summarize(
+    numberof_activities_hour = sum(number_of_activity),
+    weekday_or_weekend = weekday_or_weekend
+  )%>%
+  ggplot(aes(x = hour_of_day, numberof_activities_hour ,color = weekday_or_weekend))+
   geom_line(alpha = 0.5)
 
 ```
+
+
 - From the activities per day in minute and in hour, we can find out that, activities before 5 am and realy stable, within 1~4 pm  is relatively low.
 - number of activities in 8~12 am is relatively high
 - 20~22 pm is the peak of activities for every day.
-- The curve in the plot fits people's daily routine very well。
+- The curve in the plot fits people's daily routine very well.
+- From the weekday vs weekend plot we can find out that during weekdays, 6~10 am and 8~10 pm are the peak of activities, during weekend the number of activities between 10~20 is relatively higher than weekdays.
