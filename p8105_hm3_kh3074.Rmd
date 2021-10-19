@@ -57,6 +57,7 @@ instacart%>%
   top_n(3)%>%
   knitr::kable()
 ```
+- Above is the top three items bought in “baking ingredients”, “dog food care”, and “packaged vegetables fruits” aisles.  
 
 ### 5
 ```{r}
@@ -72,6 +73,8 @@ instacart%>%
   )%>%
   knitr::kable()
 ```
+- Above is the mean hour placed of the two items.  
+
 
 # Problem 2  
 
@@ -140,6 +143,10 @@ brfss_smart2010%>%
   geom_line(alpha = 0.5)
 ```
 
+
+- Above is the “spaghetti” plot of this average value over time within a state.  
+
+
 ## 5    
 ```{r}
 brfss_smart2010%>%
@@ -151,6 +158,11 @@ brfss_smart2010%>%
   coord_flip()+
   facet_grid(~year)
 ```
+
+
+- Above is the two-panel plot showing the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State.  
+
+
 # Problem 3  
 
 ## 1,Load and tidy data
@@ -183,6 +195,8 @@ accel_tidy%>%
   geom_point()+
   geom_line()
 ```
+
+
 - From the table and the plot, we can tell that the total activity over the day don't have a clear trend, it's more likely to be a white noise sequence.
 
 ## 3 plot
