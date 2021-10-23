@@ -219,17 +219,7 @@ accel_tidy%>%
   ggplot(aes(x = hour_of_day, numberof_activities_hour ,color = day))+
   geom_line(alpha = 0.5)
 
-#plot divided by weekday and weekend
-accel_tidy%>%
-  mutate(day_id = as.character(day_id))%>%
-  mutate(hour_of_day = ceiling(minute_of_day/60))%>%
-  group_by(day_id,hour_of_day)%>%
-  summarize(
-    numberof_activities_hour = sum(number_of_activity),
-    weekday_or_weekend = weekday_or_weekend
-  )%>%
-  ggplot(aes(x = hour_of_day, numberof_activities_hour ,color = weekday_or_weekend))+
-  geom_line(alpha = 0.5)
+
 
 ```
 
@@ -239,3 +229,8 @@ accel_tidy%>%
 - 20~22 pm is the peak of activities for every day.
 - The curve in the plot fits people's daily routine very well.
 - From the weekday vs weekend plot we can find out that during weekdays, 6~10 am and 8~10 pm are the peak of activities, during weekend the number of activities between 10~20 is relatively higher than weekdays.
+```{r}
+library(koRpus)
+wordcountaddin::text_stats("p8105_hm3_kh3074.Rmd")
+```
+
